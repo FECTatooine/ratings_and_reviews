@@ -1,0 +1,28 @@
+{
+  "name": "ratings_and_reviews",
+  "version": "1.0.0",
+  "description": "sdc project for hack reactor",
+  "main": "app.js",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "pg": "^8.7.3",
+    "utils": "^0.3.1"
+  },
+  "scripts": {
+    "start": "npx node server/app.js",
+    "server-dev": "npx nodemon --watch server server/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FECTatooine/ratings_and_reviews.git"
+  },
+  "author": "jeankim",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FECTatooine/ratings_and_reviews/issues"
+  },
+  "homepage": "https://github.com/FECTatooine/ratings_and_reviews#readme"
+}

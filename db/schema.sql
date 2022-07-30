@@ -18,7 +18,9 @@ DROP TABLE IF EXISTS photos CASCADE;
 CREATE TABLE photos (
     photo_id serial PRIMARY KEY,
     photo_url TEXT,
-    review_id INTEGER NOT NULL
+    review_id INTEGER NOT NULL,
+    FOREIGN KEY (review_id)
+      REFERENCES allReviews (review_id)
 );
 
 DROP TABLE IF EXISTS characteristics CASCADE;
