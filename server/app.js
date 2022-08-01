@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const port = 3000;
-const {helpful, report, getAllReviews} = require('../db/queries.js');
+const {helpful, report, getAllReviews, getMetaData, postReview} = require('../db/queries.js');
 const bodyParser = require('body-parser');
 
 app.listen(port, () => {
@@ -11,27 +11,31 @@ app.use(express.json());
 app.use(express.static('client/dist'))
 app.use(bodyParser.json())
 
-
 app.get('/*', function(req, res) {
-  console.log(req.query)
-  let sort = req.query.sort || 'relevant'
-  let count = req.query.count || 5
-  let page = req.query.page || 1
-  let productid = req.query.product_id
-
-  getAllReviews(productid, page, count, sort)
-    .then((reviews) => {
-      var data = {
-        'product' : productid,
-        'page': page,
-        'count': count,
-        'results': reviews.rows
-      }
-      console.log(data)
-      res.send(data)
-    })
+  let url = req.url
+  if(url.includes('meta')){
+    getMetaData(req.query.product_id)
+    .then((data) => { console.log(data); res.send(data)})
     .catch((err) => {res.send('500')})
-
+    //NEED TO BUILD OUT ON QUERY END
+  } else {
+    let sort = req.query.sort || 'relevant'
+    let count = req.query.count || 5
+    let page = req.query.page || 1
+    let productid = req.query.product_id
+    getAllReviews(productid, page, count, sort)
+      .then((reviews) => {
+        var data = {
+          'product' : productid,
+          'page': page,
+          'count': count,
+          'results': reviews.rows
+        }
+        console.log(data)
+        res.send(data)
+      })
+      .catch((err) => {res.send('500')})
+  }
 })
 
 app.put('/*', function(req, res) {
@@ -48,4 +52,11 @@ app.put('/*', function(req, res) {
   } else {
     res.send('404');
   }
+})
+
+app.post('/reviews', function(req, res) {
+  console.log(req.body)
+  // postReview()
+  // .then(() => {res.send('201')})
+  // .catch((err) => {res.send('500')})
 })
