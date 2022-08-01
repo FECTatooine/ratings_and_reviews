@@ -5,7 +5,6 @@ const helpful = (reviewid) => {
   return pool
     .connect()
     .then((client) => {
-      console.log('in client')
       return client
       .query(querystr)
       .then((res) => {client.release(); return res})
@@ -26,13 +25,37 @@ const report = (reviewid) => {
 }
 
 const postReview = (review) => {
-  let querystr = ``
+  let queryStrRev = `INSERT INTO allReviews VALUES (default, ${review.product_id}, ${review.rating}, '${review.summary}', '${review.body}', default, ${review.recommend}, '${review.name}', '${review.email}', default, default, ${Math.floor(new Date().getTime()/1000.0)}) RETURNING review_id;`
   return pool
     .connect()
     .then((client) => {
       return client
-      .query(querystr)
-      .then((res) => {client.release(); return res})
+      .query(queryStrRev)
+      .then((res) => {
+        let chars = ``
+        let reviewid = res.rows[0]['review_id']
+        for(var key in review.characteristics){
+          chars += `(default, ${key}, ${reviewid}, ${review.characteristics[key]}),`
+        }
+        let queryStr = `INSERT INTO characteristics_ratings VALUES ${chars}`
+        queryStr = queryStr.slice(0, queryStr.length - 1) + `;`
+        if(review.photos !== []){
+          console.log('in photos')
+          let photos = ``
+          allPhotos = review.photos
+          allPhotos.forEach((photo) => {
+            photos += `(default, '${photo}', ${reviewid}),`
+          })
+          queryStr += ` INSERT INTO photos VALUES ${photos}`
+          queryStr = queryStr.slice(0, queryStr.length - 1) + `;`
+        }
+        console.log('query', queryStr)
+        return client.query(queryStr)
+      })
+      .then((res) => {
+        client.release();
+        return res;
+      })
       .catch((err) => {client.release(); return err})
       })
 }
@@ -103,7 +126,6 @@ const getMetaData = (productid) => {
         return client.query(queryStr)
       })
       .then((recCount) => {
-        console.log('recCount', recCount);
         metaData['recommended'] = {0: recCount.rows[0]['count']};
         client.release();
         return metaData;

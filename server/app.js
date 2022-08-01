@@ -15,9 +15,8 @@ app.get('/*', function(req, res) {
   let url = req.url
   if(url.includes('meta')){
     getMetaData(req.query.product_id)
-    .then((data) => { console.log(data); res.send(data)})
+    .then((data) => {res.send(data)})
     .catch((err) => {res.send('500')})
-    //NEED TO BUILD OUT ON QUERY END
   } else {
     let sort = req.query.sort || 'relevant'
     let count = req.query.count || 5
@@ -31,7 +30,6 @@ app.get('/*', function(req, res) {
           'count': count,
           'results': reviews.rows
         }
-        console.log(data)
         res.send(data)
       })
       .catch((err) => {res.send('500')})
@@ -55,8 +53,7 @@ app.put('/*', function(req, res) {
 })
 
 app.post('/reviews', function(req, res) {
-  console.log(req.body)
-  // postReview()
-  // .then(() => {res.send('201')})
-  // .catch((err) => {res.send('500')})
+  postReview(req.body)
+  .then(() => {res.sendStatus(201)})
+  .catch((err) => {res.sendStatus(500)})
 })
