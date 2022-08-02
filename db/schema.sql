@@ -42,4 +42,8 @@ CREATE TABLE characteristics_ratings (
       REFERENCES allReviews (review_id)
 );
 
+CREATE INDEX product_id_index ON allReviews(product_id);
+CREATE INDEX review_id_index ON photos(review_id);
+CREATE INDEX char_id_index ON characteristics_ratings(char_id);
+CREATE INDEX product_id_index ON characteristics(product_id);
 

@@ -40,7 +40,6 @@ const postReview = (review) => {
         let queryStr = `INSERT INTO characteristics_ratings VALUES ${chars}`
         queryStr = queryStr.slice(0, queryStr.length - 1) + `;`
         if(review.photos !== []){
-          console.log('in photos')
           let photos = ``
           allPhotos = review.photos
           allPhotos.forEach((photo) => {
@@ -49,7 +48,6 @@ const postReview = (review) => {
           queryStr += ` INSERT INTO photos VALUES ${photos}`
           queryStr = queryStr.slice(0, queryStr.length - 1) + `;`
         }
-        console.log('query', queryStr)
         return client.query(queryStr)
       })
       .then((res) => {
@@ -96,7 +94,7 @@ const getAllReviews = (productid, page, count, sort) => {
   .then((client) => {
     return client
     .query(querystr)
-    .then((res) => {client.release(); return res})
+    .then((res) => {client.release(); return res.rows})
     .catch((err) => {client.release(); return err})
     })
 

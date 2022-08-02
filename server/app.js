@@ -28,7 +28,7 @@ app.get('/*', function(req, res) {
           'product' : productid,
           'page': page,
           'count': count,
-          'results': reviews.rows
+          'results': reviews
         }
         res.send(data)
       })

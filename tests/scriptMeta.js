@@ -5,13 +5,15 @@ import { Counter } from 'k6/metrics';
 export const requests = new Counter('http_reqs');
 
 export const options = {
-  vus: 1,
-  duration: '60s'
+  vus: 100,
+  duration: '60s',
 }
 
-const max = 1000011 //highest product id
+// const max = 1000011 //highest product id
+const max = 50
 const min = Math.floor(max * .90)
 const rndproduct = Math.floor(Math.random() * (max - min + 1)) + min
+
 
 const url = `http://localhost:3000/reviews/meta?product_id=${rndproduct}`
 
