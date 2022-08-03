@@ -1,5 +1,6 @@
 
 #SECRETS
 .env
+SDC-ratings-and-revs.pem
 
 queriesDRAFTS.js

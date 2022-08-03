@@ -10,6 +10,10 @@ app.listen(port, () => {
 app.use(express.json());
 app.use(express.static('client/dist'))
 app.use(bodyParser.json())
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
 
 app.get('/*', function(req, res) {
   let url = req.url

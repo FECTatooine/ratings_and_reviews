@@ -5,9 +5,8 @@ import { Counter } from 'k6/metrics';
 export const requests = new Counter('http_reqs');
 
 export const options = {
-  vus: 10,
+  vus: 1,
   duration: '100s',
-  gracefulStop: '45s'
 }
 
 // const max = 1000011 //highest product id
