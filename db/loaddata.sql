@@ -17,7 +17,7 @@ FROM '/Users/jeankim/Desktop/SDCratingsandrevs/characteristic_reviews.csv'
 DELIMITER ',' CSV HEADER;
 
 
--- SELECT setval('"allreviews_review_id_seq"', (5774952+1));
+-- SELECT setval('"allreviews_review_id_seq"', (5774952));
 
 -- SELECT count (*) FROM allreviews;
 -- SELECT count (*) FROM characteristics;
