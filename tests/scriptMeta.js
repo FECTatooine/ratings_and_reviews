@@ -9,8 +9,8 @@ export const options = {
   duration: '60s',
 }
 
-// const max = 1000011 //highest product id
-const max = 50
+const max = 1000011 //highest product id
+// const max = 50
 const min = Math.floor(max * .90)
 const rndproduct = Math.floor(Math.random() * (max - min + 1)) + min
 

@@ -108,7 +108,6 @@ const getAllReviews = (productid, page, count, sort) => {
       rows.forEach(row =>{
         data.push(row['json_build_object'])
       })
-      console.log('data', data)
       client.release();
       return data})
     .catch((err) => {client.release(); return err})
@@ -116,30 +115,34 @@ const getAllReviews = (productid, page, count, sort) => {
 }
 
 const getMetaData = (productid) => {
-  let querystr = `SELECT * FROM characteristics
-  LEFT OUTER JOIN
-  (SELECT characteristics_ratings.char_id, AVG(characteristics_ratings.char_rating) as value
-  FROM characteristics_ratings GROUP BY characteristics_ratings.char_id) ratings
-  ON characteristics.char_id = ratings.char_id
-  WHERE characteristics.product_id = ${productid};`
-  var metaData = {'product_id': productid}
+  let querystr = `SELECT json_build_object(
+    'ratings', json_build_object(
+       1, (SELECT COUNT(rating) FROM allReviews WHERE product_id = ${productid} AND rating = 1),
+       2, (SELECT COUNT(rating) FROM allReviews WHERE product_id = ${productid} AND rating = 2),
+       3, (SELECT COUNT(rating) FROM allReviews WHERE product_id = ${productid} AND rating = 3),
+       4, (SELECT COUNT(rating) FROM allReviews WHERE product_id = ${productid} AND rating = 4),
+       5, (SELECT COUNT(rating) FROM allReviews WHERE product_id = ${productid} AND rating = 5)
+      ),
+    'recommended', (SELECT COUNT(recommend) FROM allReviews WHERE product_id = 5 AND recommend = true),
+    'characteristics', json_object_agg(
+      characteristics.characteristic_name, json_build_object(
+      'id', characteristics.char_id,
+      'value', (SELECT AVG(characteristics_ratings.char_rating) FROM characteristics_ratings  WHERE characteristics_ratings.char_id = characteristics.char_id)
+    )
+    )
+  )
+  FROM characteristics
+  WHERE product_id = ${productid}
+  LIMIT 1;`
+
   return pool
     .connect()
     .then((client) => {
       return client
       .query(querystr)
-      .then((res) => {return res.rows})
-      .then((rows) => {
-        var characteristics = {}
-        rows.forEach((row) => {
-          characteristics[row.characteristic_name] = {id: row.char_id, value: row.value}
-        })
-        metaData['characteristics'] = characteristics
-        queryStr = `SELECT COUNT(recommend) FROM allReviews WHERE product_id = ${productid} AND recommend = true;`
-        return client.query(queryStr)
-      })
-      .then((recCount) => {
-        metaData['recommended'] = {0: recCount.rows[0]['count']};
+      .then((res) => {
+        var metaData = res.rows[0]['json_build_object'];
+        metaData['product_id'] = productid;
         client.release();
         return metaData;
       })

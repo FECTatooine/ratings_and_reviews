@@ -5,12 +5,12 @@ import { Counter } from 'k6/metrics';
 export const requests = new Counter('http_reqs');
 
 export const options = {
-  vus: 1,
+  vus: 50,
   duration: '100s',
 }
 
-// const max = 1000011 //highest product id
-const max = 50
+const max = 1000011 //highest product id
+// const max = 50
 const min = Math.floor(max * .90)
 const rndproduct = Math.floor(Math.random() * (max - min + 1)) + min
 

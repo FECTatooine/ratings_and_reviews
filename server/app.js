@@ -29,7 +29,6 @@ app.get('/*', function(req, res) {
     let productid = req.query.product_id
     getAllReviews(productid, page, count, sort)
       .then((reviews) => {
-        console.log('reviews', reviews)
         var data = {
           'product' : productid,
           'page': page,
