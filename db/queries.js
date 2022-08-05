@@ -73,18 +73,25 @@ const getAllReviews = (productid, page, count, sort) => {
   } else {
     offset = (page - 1) * count;
   }
-  let querystr = `SELECT allReviews.review_id, allReviews.rating, allReviews.summary, allReviews.recommend, allReviews.response, allReviews.body, allReviews.dateCreated as date, allReviews.username as reviewer_name, allReviews.helpful as helpfulness,
-  CASE WHEN count(photo) = 0 THEN ARRAY[]::json[] ELSE (array_agg(reviewphotos.photo)) END AS photos
+  let queryStr = ` SELECT
+  json_build_object(
+    'review_id', allReviews.review_id,
+    'rating', allReviews.rating,
+    'summary', allReviews.summary,
+    'recommend', allReviews.recommend,
+    'response', allReviews.response,
+    'body', allReviews.body,
+    'date', allReviews.dateCreated,
+    'reviewer_name', allReviews.username,
+    'helpfulness', allReviews.helpful,
+    'photos', (SELECT array_agg
+             (json_build_object('id', photos.photo_id, 'url', photos.photo_url)
+                    ORDER BY photos.photo_id )
+              FROM photos
+                    WHERE photos.review_id = allReviews.review_id)
+  )
   FROM allReviews
-  LEFT OUTER JOIN
-  (
-    SELECT review_id, json_build_object('id', photo_id, 'url', photo_url) as photo
-    FROM photos
-    ORDER BY photo_id
-  ) reviewphotos
-  ON allReviews.review_id = reviewphotos.review_id
-  WHERE allReviews.product_id = ${productid} AND report = false
-  GROUP BY allReviews.review_id
+  WHERE product_id = ${productid} AND report = false
   ORDER BY ${order}
   LIMIT ${count}
   OFFSET ${offset};`
@@ -93,11 +100,19 @@ const getAllReviews = (productid, page, count, sort) => {
   .connect()
   .then((client) => {
     return client
-    .query(querystr)
-    .then((res) => {client.release(); return res.rows})
+    .query(queryStr)
+    .then((res) => {
+      console.log(res)
+      var data = [];
+      var rows = res.rows
+      rows.forEach(row =>{
+        data.push(row['json_build_object'])
+      })
+      console.log('data', data)
+      client.release();
+      return data})
     .catch((err) => {client.release(); return err})
     })
-
 }
 
 const getMetaData = (productid) => {

@@ -17,4 +17,3 @@ pool.on('error', (err, client) => {
 module.exports = pool;
 
 
-// node databasepg.js

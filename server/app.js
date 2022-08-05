@@ -22,12 +22,14 @@ app.get('/*', function(req, res) {
     .then((data) => {res.send(data)})
     .catch((err) => {res.send('500')})
   } else {
+    console.log('in get')
     let sort = req.query.sort || 'relevant'
     let count = req.query.count || 5
     let page = req.query.page || 1
     let productid = req.query.product_id
     getAllReviews(productid, page, count, sort)
       .then((reviews) => {
+        console.log('reviews', reviews)
         var data = {
           'product' : productid,
           'page': page,

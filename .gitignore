@@ -3,6 +3,7 @@
 .env
 ec2-db.pem
 local.txt
+ratingsandrevs-server-1.pem
 
 queriesDRAFTS.js
 
